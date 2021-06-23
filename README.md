@@ -10,5 +10,7 @@
 ## Comandos do jogo:
 
 CTRL - Atirar
+|
 ASK - Sair
+|
 Motivimentação pelas setas do teclado
