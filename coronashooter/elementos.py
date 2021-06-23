@@ -3,9 +3,7 @@ import os
 
 
 class ElementoSprite(pygame.sprite.Sprite):
-    """
-    Esta é a classe básica de todos os objetos do jogo.
-    """
+   
 
     def __init__(self, image, position, speed=None, new_size=None):
         pygame.sprite.Sprite.__init__(self)

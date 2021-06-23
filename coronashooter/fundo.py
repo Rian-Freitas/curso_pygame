@@ -4,14 +4,10 @@ from math import ceil
 
 
 class Fundo:
-    """
-    Esta classe cria o fundo do jogo
-    """
+  
 
-    def __init__(self, image="space.png"):
-        """
-        Desenha o fundo da tela
-        """
+    def __init__(self, image="tile2"):
+        
         image = os.path.join('imagens', image)
         image = pygame.image.load(image).convert()
 

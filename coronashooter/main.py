@@ -1,4 +1,5 @@
 import pygame
+import os
 from pygame.locals import (DOUBLEBUF,
                            FULLSCREEN,
                            KEYDOWN,
@@ -16,12 +17,18 @@ from elementos import ElementoSprite
 import random
 
 nivel = 1
+
 class Jogo:
     def __init__(self, size=(600, 600), fullscreen=False):
         self.elementos = {}
         pygame.init()
         self.screen = pygame.display.set_mode(size)
         self.fundo = Fundo()
+        self.jogador = None
+        # self.musica = musica
+        self.interval = 0
+        self.nivel = 0
+
         flags = DOUBLEBUF
         if fullscreen:
             flags |= FULLSCREEN
@@ -30,6 +37,52 @@ class Jogo:
         pygame.mouse.set_visible(0)
         pygame.display.set_caption('The Corona Shooter')
         self.run = True
+
+
+    def manutenção(self):
+        r = random.randint(0, 100)
+        x = random.randint(1, self.screen_size[0])
+        if r > (40 * len(self.elementos["virii"])):
+            enemy = Virus([0, 0])
+            size = enemy.get_size()
+            enemy.set_pos([x, 0])
+            self.elementos["virii"].add(enemy)
+
+    def muda_nivel(self):
+        xp = self.jogador.get_pontos()
+        if xp > 10 and self.level == 0:
+            self.fundo = Fundo("tile2")
+            self.nivel = 1
+            self.jogador.set_lives(self.jogador.get_lives() + 3)
+        elif xp > 50 and self.level == 1:
+            self.fundo = Fundo("tile2")
+            self.nivel = 2
+            self.jogador.set_lives(self.player.get_lives() + 6)
+            
+    def troca_musica_fundo(self):
+        
+        musica = "Fase1.wav"
+        musica = os.path.join("sons", musica)
+        musica = pygame.mixer.music.load(musica)
+        
+        if self.nivel == 0:  
+            pygame.mixer.init()
+            musica = "Fase 1.wav"
+            pygame.mixer.music.play(-1)
+        elif self.nivel == 1:
+            pygame.mixer.music.stop()
+            pygame.mixer.quit()
+                        
+            pygame.mixer.init()
+            musica = "Fase 2.wav"
+            pygame.mixer.music.play(-1)
+        elif self.nivel == 2:
+            pygame.mixer.music.stop()
+            pygame.mixer.quit()
+            
+            pygame.mixer.init()
+            musica = "Fase 3.wav"
+            pygame.mixer.music.play(-1)
 
     def atualiza_elementos(self, dt):
         self.fundo.update(dt)
@@ -105,6 +158,9 @@ class Jogo:
             clock.tick(1000 / dt)
 
             self.trata_eventos()
+            self.ação_elemento()
+            self.troca_musica_fundo()
+            self.manutenção()
 
             # Atualiza Elementos
             self.atualiza_elementos(dt)
@@ -155,7 +211,10 @@ class Virus3(Nave):
             image = "virus3.png"
         super().__init__(position, lives, speed, image, size)
         
-
+class Jogador(Nave):
+ 
+    def __init__(self, position, lives=10, image=None, new_size=[83, 248]):
+    
 class Tiro(ElementoSprite):
     def __init__(self, position, speed=None, image=None, list=None):
         if not image:
@@ -191,6 +250,14 @@ class Player(Nave):
     def vel_down(self):
         speed = self.get_speed()
         self.set_speed((speed[0], speed[1] + self.acceleration[1]))
+
+class Tiro(ElementoSprite):
+    def __init__(self, position, speed=None, image=None, list=None):
+        if not image:
+            image = "gota.png"
+        super().__init__(image, position, speed)
+        if list is not None:
+            self.add(list)
 
     def vel_left(self):
         speed = self.get_speed()
